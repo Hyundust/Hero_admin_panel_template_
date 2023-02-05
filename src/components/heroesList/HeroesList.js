@@ -2,7 +2,8 @@ import {useHttp} from '../../hooks/http.hook';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CSSTransition, TransitionGroup} from 'react-transition-group';
-import { FetchHeroes, heroDeleted } from '../../actions';
+import { heroDeleted,FetchHeroes,selectAll } from '../heroesList/heroesSlice';
+
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
@@ -18,7 +19,7 @@ const HeroesList = (props) => {
 
 
   const filteredHeroesSelector = createSelector(
-    (state)=>state.heroes.heroes,
+    selectAll,
     (state)=>state.filters.activeFilter,
     (heroes,filter) =>{
         if(filter ==="all"){
@@ -44,8 +45,8 @@ const HeroesList = (props) => {
 
   // On component mount, dispatch the heroesFetching action and make a GET request to fetch heroes data
   useEffect(() => {
-    dispatch(FetchHeroes(request));
-  }, [dispatch,request]);
+    dispatch(FetchHeroes());
+  }, []);
 
   // Function to delete hero by its id
   // ONLY if the DELETE request is successful
@@ -55,7 +56,7 @@ const HeroesList = (props) => {
       .then(data => console.log(data, 'Deleted'))
       .then(dispatch(heroDeleted(id)))
       .catch(err => console.log(err));
-  }, [request,dispatch]);
+  }, [request]);
 
   // If the heroes are still loading, show the Spinner component
   if (heroesLoadingStatus === "loading") {

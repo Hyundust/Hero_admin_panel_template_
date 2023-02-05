@@ -2,7 +2,7 @@ import { useHttp } from '../../hooks/http.hook';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
-import {FetchFilters, activeFilterChanged } from '../../actions';
+import { filtersChanged,FetchFilters } from '../heroesFilters/filtersSlice';
 import Spinner from '../spinner/Spinner';
 
 
@@ -17,7 +17,7 @@ const HeroesFilters = () => {
   // Fetch filters on component mount
   useEffect(() => {
     
-    dispatch(FetchFilters(request));
+    dispatch(FetchFilters());
 
     // eslint-disable-next-line
   }, []);
@@ -49,7 +49,7 @@ const HeroesFilters = () => {
           key={name}
           id={name}
           className={btnClass}
-          onClick={() => dispatch(activeFilterChanged(name))}
+          onClick={() => dispatch(filtersChanged(name))}
         >
           {name}
         </button>

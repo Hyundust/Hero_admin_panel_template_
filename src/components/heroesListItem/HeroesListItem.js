@@ -1,6 +1,5 @@
 const HeroesListItem = ({ name, description, element, onDelete }) => {
     let elementClassName;
-  console.log(element)
     switch (element) {
       case "fire":
         elementClassName = "bg-danger bg-gradient";

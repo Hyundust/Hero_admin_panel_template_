@@ -1,22 +1,10 @@
 {
   "heroes": [
     {
-      "id": "e2c899f2-0088-48c1-9ed4-1be109a924e9",
-      "name": "afasfasf",
-      "description": "asfaf",
+      "id": "5ba92a92-3f56-424e-a2e6-097e4bf20b6e",
+      "name": "petisdethrow",
+      "description": "FetchFilters",
       "element": "fire"
-    },
-    {
-      "id": "644ec068-fd66-47dc-bffb-65be923974a3",
-      "name": "asfsafasf",
-      "description": "asfasfasf",
-      "element": "water"
-    },
-    {
-      "id": "24a2f928-c7fa-440b-9b6a-1c2b9affa138",
-      "name": "fasfasfasf",
-      "description": "asfsafasfasf",
-      "element": "wind"
     }
   ],
   "filters": [
