@@ -2,7 +2,8 @@ import {useHttp} from '../../hooks/http.hook';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { heroCreated } from "../heroesList/heroesSlice"
+
+import { useCreateHeroMutation } from '../../api/apiSlice';
 
 const HeroesAddForm = () => {
     
@@ -13,12 +14,13 @@ const HeroesAddForm = () => {
     // State hook to keep track of hero element
     const [heroElement, setHeroElement] = useState('');
 
+    const [createHero,{isLoading}] =useCreateHeroMutation();
+
     // Use the useSelector hook to retrieve data from the store
     const {filters, filtersLoadingStatus} = useSelector(state => state.filters);
     // Use the useDispatch hook to dispatch actions to the store
-    const dispatch = useDispatch();
+    
     // Use the useHttp hook to make HTTP requests
-    const {request} = useHttp();
 
     // Submit event handler for the form
     const onSubmitHandler = (e) => {
@@ -34,13 +36,7 @@ const HeroesAddForm = () => {
         }
 
         // Make a POST request to create a new hero, using the request method from the useHttp hook
-        request("http://localhost:3001/heroes", "POST", JSON.stringify(newHero))
-            // Log the response if the request was successful
-            .then(res => console.log(res, 'success'))
-            // Dispatch the heroCreated action with the new hero
-            .then(()=>dispatch(heroCreated(newHero)))
-            // Log the error if the request failed
-            .catch(err => console.log(err));
+        createHero(newHero).unwrap();
 
         // Reset the input fields to empty strings
         setHeroName('');
@@ -118,5 +114,3 @@ const HeroesAddForm = () => {
 }
 
 export default HeroesAddForm;
-
-

@@ -1,67 +1,51 @@
-import {useHttp} from '../../hooks/http.hook';
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
+import {  useCallback,useMemo } from 'react';
+import {  useSelector } from 'react-redux';
 import { CSSTransition, TransitionGroup} from 'react-transition-group';
-import { heroDeleted,FetchHeroes,selectAll } from '../heroesList/heroesSlice';
 
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
 import './heroesList.scss';
-import { createSelector } from 'reselect';
 
-// The task for this component:
-// On clicking the "x" button, the character is deleted from the global state
-// Advanced task:
-// The deletion takes place from the json file using the DELETE method
+
+import { useGetHeroesQuery,useDeleteHeroMutation } from '../../api/apiSlice';
 
 const HeroesList = (props) => {
+    const {
+      data:heroes = [],
+      isLoading,
+      isError,  
+    } = useGetHeroesQuery();
 
+  const activeFilter = useSelector(state=>state.filters.activeFilter);
 
-  const filteredHeroesSelector = createSelector(
-    selectAll,
-    (state)=>state.filters.activeFilter,
-    (heroes,filter) =>{
-        if(filter ==="all"){
-            return heroes;
-         }else{
-             return heroes.filter(item =>item.element === filter);
-         }
-    }
+  const [deleteHero]= useDeleteHeroMutation();
 
+  const filteredHeroes = useMemo(() =>{
+    const filteredHeroes=heroes.slice();
+
+      if(activeFilter ==="all"){
+          return filteredHeroes;
+      }else{
+         return filteredHeroes.filter(item =>item.element === activeFilter);
+     }
+    },[activeFilter, heroes]);
     
-    )
 
-  const filteredHeroes = useSelector(filteredHeroesSelector);
-    
-  // Get filteredHeroes and heroesLoadingStatus from the store
-  const { heroesLoadingStatus} = useSelector(state => state.heroes.heroesLoadingStatus);
-
-  // Access the dispatch function to dispatch actions to the store
-  const dispatch = useDispatch();
-
-  // Get the request method from the custom hook useHttp
-  const {request} = useHttp();
-
-  // On component mount, dispatch the heroesFetching action and make a GET request to fetch heroes data
-  useEffect(() => {
-    dispatch(FetchHeroes());
-  }, []);
+ 
 
   // Function to delete hero by its id
-  // ONLY if the DELETE request is successful
-  // Observe the chain of actions => reducers
-  const onDelete = useCallback((id) => {
-    request(`http://localhost:3001/heroes/${id}`, "DELETE")
-      .then(data => console.log(data, 'Deleted'))
-      .then(dispatch(heroDeleted(id)))
-      .catch(err => console.log(err));
-  }, [request]);
+  
+  const onDelete = useCallback((id)=>{
+    deleteHero(id);
+  },[deleteHero]);
+
 
   // If the heroes are still loading, show the Spinner component
-  if (heroesLoadingStatus === "loading") {
+  if (isLoading) {
     return <Spinner/>;
-  } else if (heroesLoadingStatus === "error") {
+  } else if (isError) {
     // If there's an error in fetching heroes data, show an error message
     return <h5 className="text-center mt-5">Error loading</h5>
   }
